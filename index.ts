@@ -1,7 +1,7 @@
 import Server from './classes/server';
 import { SERVER_PORT } from './global/environment';
 import router from './routes/router';
-const server = new Server();
+const server = Server.instance;
 
 server.app.use('/', router);
 server.start(() => {

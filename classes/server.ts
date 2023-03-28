@@ -1,31 +1,47 @@
 import express, { Application } from 'express';
-import cors from 'cors';
 import userRoutes from '../routes/usuario';
+import cors from 'cors';
+import socketIO from 'socket.io';
+import http from 'http';
 import { SERVER_PORT } from '../global/environment';
 export default class Server {
+  private static _intance: Server;
   public app!: Application;
   public port!: number;
+  public io!: socketIO.Server;
+  private httpServer!: http.Server;
   private apiPaths = {
     usuarios: '/api/usuarios',
   };
-  constructor() {
+  private constructor() {
     this.app = express();
     this.port = SERVER_PORT;
-    // Middlewares
     this.middlewares();
+    this.httpServer = new http.Server(this.app);
+    this.io = new socketIO.Server(this.httpServer, {
+      cors: { origin: true, credentials: true },
+    });
+    this.listenSockets();
     this.routes();
   }
-  public middlewares(): void {
-    // cors
+  public static get instance(): Server {
+    return this._intance || (this._intance = new this());
+  }
+  private listenSockets() {
+    console.log('escuchando socket');
+    this.io.on('connection', (cliente) => {
+      console.log('Nuevo cliente conectado');
+    });
+  }
+  private middlewares(): void {
     this.app.use(cors({ origin: true, credentials: true }));
-    // lectura y parseo del body
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(express.json());
   }
-  public routes() {
+  private routes(): void {
     this.app.use(this.apiPaths.usuarios, userRoutes);
   }
   public start(callback: () => void): void {
-    this.app.listen(this.port, callback);
+    this.httpServer.listen(this.port, callback);
   }
 }
