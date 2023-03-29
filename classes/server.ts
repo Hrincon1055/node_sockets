@@ -3,6 +3,7 @@ import userRoutes from '../routes/usuario';
 import cors from 'cors';
 import socketIO from 'socket.io';
 import http from 'http';
+import * as socket from '../sockets/socket';
 import { SERVER_PORT } from '../global/environment';
 export default class Server {
   private static _intance: Server;
@@ -30,7 +31,9 @@ export default class Server {
   private listenSockets() {
     console.log('escuchando socket');
     this.io.on('connection', (cliente) => {
-      console.log('Nuevo cliente conectado');
+      console.log('cliente conectado');
+      socket.mensaje(cliente, this.io);
+      socket.desconectar(cliente);
     });
   }
   private middlewares(): void {
