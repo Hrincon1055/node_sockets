@@ -12,3 +12,18 @@ export const mensaje = (cliente: Socket, io: socketIO.Server): void => {
     io.emit('mensaje-nuevo', payload);
   });
 };
+export const configurarUsuario = (
+  cliente: Socket,
+  io: socketIO.Server
+): void => {
+  cliente.on(
+    'configurar-usuario',
+    (payload: { nombre: string }, callback: Function) => {
+      console.log('Usuario recibido', payload.nombre);
+      callback({
+        ok: true,
+        mensaje: `Usuario ${payload.nombre}, configurado`,
+      });
+    }
+  );
+};
