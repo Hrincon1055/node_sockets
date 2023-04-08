@@ -32,11 +32,11 @@ export default class Server {
     console.log('escuchando socket');
     this.io.on('connection', (cliente) => {
       console.log(cliente.id);
-      socket.conectarCliente(cliente);
+      socket.conectarCliente(cliente, this.io);
       socket.configurarUsuario(cliente, this.io);
-
+      socket.obtenerUsuarios(cliente, this.io);
       socket.mensaje(cliente, this.io);
-      socket.desconectar(cliente);
+      socket.desconectar(cliente, this.io);
     });
   }
   private middlewares(): void {

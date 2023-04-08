@@ -19,7 +19,7 @@ export class UsuariosLista {
     console.log(this.lista);
   }
   public getLista(): Usuario[] {
-    return this.lista;
+    return this.lista.filter((usuario) => usuario.nombre !== 'sin-nombre');
   }
   public getUsuario(id: string): Usuario | undefined {
     return this.lista.find((usuario) => usuario.id === id);
