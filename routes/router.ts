@@ -1,14 +1,20 @@
 import { Router, Request, Response } from 'express';
 import Server from '../classes/server';
 import { usuariosConectados } from '../sockets/socket';
+import { GraficaData } from '../classes/grafica';
 
 const router = Router();
-
-router.get('/mensajes', (req: Request, res: Response) => {
-  res.json({
-    ok: true,
-    mensaje: 'TODO OK',
-  });
+const grafica = new GraficaData();
+router.get('/grafica', (req: Request, res: Response) => {
+  res.json(grafica.getDataGrafica());
+});
+router.post('/grafica', (req: Request, res: Response) => {
+  const mes = req.body.mes;
+  const unidades = Number(req.body.unidades);
+  grafica.incrementarValor(mes, unidades);
+  const server = Server.instance;
+  server.io.emit('cambio-grafica', grafica.getDataGrafica());
+  res.json(grafica.getDataGrafica());
 });
 router.post('/mensajes', (req: Request, res: Response) => {
   const cuerpo = req.body.cuerpo;
